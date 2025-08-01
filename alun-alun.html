@@ -2,47 +2,35 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Alun-Alun</title>
+    <title>Alun Alun</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-    <!-- A-Frame -->
-    <script src="https://aframe.io/releases/1.7.0/aframe.min.js" defer></script>
-
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
-        background: #000;
-      }
+      html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
     </style>
   </head>
   <body>
-    <a-scene loading-screen="enabled: false" background="color: #000">
-      <!-- Kamera dengan rotasi otomatis dan kontrol penuh -->
-      <a-entity id="cameraRig" position="0 1.6 0" auto-rotate-camera>
-        <a-entity
-          id="camera"
-          camera="fov: 80"
-          look-controls="reverseMouseDrag: false; magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: true"
-          wasd-controls="enabled: false"
-          zoom-controls>
-        </a-entity>
+    <a-scene loading-screen="enabled: false">
+      <!-- Kamera default -->
+      <a-entity 
+        camera="fov: 80" 
+        look-controls="magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: true"
+        zoom-controls 
+        position="0 1.6 0">
       </a-entity>
 
-      <!-- Sky Panorama -->
+      <!-- Sky panorama dengan auto rotate -->
       <a-sky 
+        id="sky" 
         src="Alun Alun.png" 
-        preload="true" 
         rotation="0 0 0"
-        loading="eager">
+        auto-rotate-sky>
       </a-sky>
     </a-scene>
 
-    <!-- Auto Rotate Camera Component -->
+    <!-- Komponen auto rotate pada sky -->
     <script>
-      AFRAME.registerComponent('auto-rotate-camera', {
+      AFRAME.registerComponent('auto-rotate-sky', {
         schema: { speed: { type: 'number', default: 0.05 } },
         init: function () {
           this.enabled = true;
@@ -65,7 +53,7 @@
       });
     </script>
 
-    <!-- Zoom Controls -->
+    <!-- Komponen zoom -->
     <script>
       AFRAME.registerComponent('zoom-controls', {
         init: function () {

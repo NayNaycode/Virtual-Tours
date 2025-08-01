@@ -3,41 +3,51 @@
   <head>
     <meta charset="utf-8">
     <title>Alun-Alun</title>
-    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js" defer></script>
+
     <style>
       html, body {
         margin: 0;
         padding: 0;
         height: 100%;
         overflow: hidden;
+        background: #000;
       }
     </style>
   </head>
   <body>
-    <a-scene>
-      <!-- Kamera rig dengan auto-rotate -->
+    <a-scene loading-screen="enabled: false" background="color: #000">
+      <!-- Kamera dengan rotasi otomatis dan kontrol penuh -->
       <a-entity id="cameraRig" position="0 1.6 0" auto-rotate-camera>
         <a-entity
           id="camera"
           camera="fov: 80"
-          look-controls="magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: false"
+          look-controls="reverseMouseDrag: false; magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: true"
           wasd-controls="enabled: false"
           zoom-controls>
         </a-entity>
       </a-entity>
 
-      <!-- Sky panorama -->
-      <a-sky src="Alun Alun.png"></a-sky>
+      <!-- Sky Panorama -->
+      <a-sky 
+        src="Alun Alun.png" 
+        preload="true" 
+        rotation="0 0 0"
+        loading="eager">
+      </a-sky>
     </a-scene>
 
-    <!-- Komponen auto-rotate -->
+    <!-- Auto Rotate Camera Component -->
     <script>
       AFRAME.registerComponent('auto-rotate-camera', {
         schema: { speed: { type: 'number', default: 0.05 } },
         init: function () {
           this.enabled = true;
           const sceneEl = this.el.sceneEl;
+
           const pause = () => this.enabled = false;
           const resume = () => this.enabled = true;
 
@@ -55,12 +65,17 @@
       });
     </script>
 
-    <!-- Komponen zoom-controls -->
+    <!-- Zoom Controls -->
     <script>
       AFRAME.registerComponent('zoom-controls', {
         init: function () {
           const cameraEl = this.el;
-          const camera = cameraEl.getObject3D('camera');
+          let camera = null;
+
+          this.el.addEventListener('loaded', () => {
+            camera = cameraEl.getObject3D('camera');
+          });
+
           const minFov = 30;
           const maxFov = 100;
 

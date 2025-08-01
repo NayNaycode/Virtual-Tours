@@ -2,15 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Alun Alun</title>
+    <title>Virtual Tour - Alun Alun</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <style>
-      html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
     </style>
   </head>
   <body>
-    <a-scene loading-screen="enabled: false">
+    <a-scene loading-screen="enabled: false" background="color: #000">
       <!-- Kamera default -->
       <a-entity 
         camera="fov: 80" 
@@ -19,16 +25,17 @@
         position="0 1.6 0">
       </a-entity>
 
-      <!-- Sky panorama dengan auto rotate -->
+      <!-- Sky panorama, mulai dari arah kiri dan langsung muncul -->
       <a-sky 
         id="sky" 
         src="Alun Alun.png" 
-        rotation="0 0 0"
+        rotation="0 -90 0" 
+        preload="true" 
         auto-rotate-sky>
       </a-sky>
     </a-scene>
 
-    <!-- Komponen auto rotate pada sky -->
+    <!-- Komponen auto rotate -->
     <script>
       AFRAME.registerComponent('auto-rotate-sky', {
         schema: { speed: { type: 'number', default: 0.05 } },

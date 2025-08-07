@@ -25,40 +25,19 @@
         position="0 1.6 0">
       </a-entity>
 
-      <!-- Sky panorama, mulai dari arah kiri dan langsung muncul -->
+      <!-- Sky panorama: mulai dari kiri, lalu bergerak step-by-step -->
       <a-sky 
         id="sky" 
         src="Alun Alun.png" 
         rotation="0 -90 0" 
-        preload="true" 
-        auto-rotate-sky>
+        preload="true"
+        animation__1="property: rotation; to: 0 0 0; dur: 3000; startEvents: step1"
+        animation__2="property: rotation; to: 0 90 0; dur: 3000; startEvents: step2"
+        animation__3="property: rotation; to: 0 180 0; dur: 3000; startEvents: step3"
+        animation__4="property: rotation; to: 0 270 0; dur: 3000; startEvents: step4"
+        animation__5="property: rotation; to: 0 360 0; dur: 3000; startEvents: step5">
       </a-sky>
     </a-scene>
-
-    <!-- Komponen auto rotate -->
-    <script>
-      AFRAME.registerComponent('auto-rotate-sky', {
-        schema: { speed: { type: 'number', default: 0.05 } },
-        init: function () {
-          this.enabled = true;
-          const sceneEl = this.el.sceneEl;
-
-          const pause = () => this.enabled = false;
-          const resume = () => this.enabled = true;
-
-          sceneEl.addEventListener('mousedown', pause);
-          sceneEl.addEventListener('touchstart', pause);
-          sceneEl.addEventListener('mouseup', resume);
-          sceneEl.addEventListener('touchend', resume);
-        },
-        tick: function () {
-          if (!this.enabled) return;
-          const rot = this.el.getAttribute('rotation');
-          rot.y += this.data.speed;
-          this.el.setAttribute('rotation', rot);
-        }
-      });
-    </script>
 
     <!-- Komponen zoom -->
     <script>
@@ -85,5 +64,24 @@
         }
       });
     </script>
+
+    <!-- Animasi rotasi bertahap -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const sky = document.querySelector('#sky');
+        let step = 1;
+
+        const rotateLoop = () => {
+          sky.emit(`step${step}`);
+          step = (step % 5) + 1; // Loop 1 → 2 → 3 → 4 → 5 → 1
+          setTimeout(rotateLoop, 3000); // 3 detik tiap rotasi
+        };
+
+        // Mulai segera setelah dimuat
+        setTimeout(rotateLoop, 500); // jeda pendek agar semua asset siap
+      });
+    </script>
   </body>
 </html>
+
+

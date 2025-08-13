@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Virtual Tour - Ranau Rafting Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene loading-screen="enabled: false" background="color: #000">
+      <!-- Kamera default -->
+      <a-entity 
+        camera="fov: 80" 
+        look-controls="magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: true"
+        zoom-controls 
+        position="0 1.6 0">
+      </a-entity>
+
+      <!-- Sky panorama, mulai dari arah kiri dan langsung muncul -->
+      <a-sky 
+        id="sky" 
+        src="Ranau rafting.jpg" 
+        rotation="0 -90 0" 
+        preload="true" 
+        auto-rotate-sky>
+      </a-sky>
+    </a-scene>
+
+    <!-- Komponen auto rotate -->
+    <script>
+      AFRAME.registerComponent('auto-rotate-sky', {
+        schema: { speed: { type: 'number', default: 0.05 } },
+        init: function () {
+          this.enabled = true;
+          const sceneEl = this.el.sceneEl;
+
+          const pause = () => this.enabled = false;
+          const resume = () => this.enabled = true;
+
+          sceneEl.addEventListener('mousedown', pause);
+          sceneEl.addEventListener('touchstart', pause);
+          sceneEl.addEventListener('mouseup', resume);
+          sceneEl.addEventListener('touchend', resume);
+        },
+        tick: function () {
+          if (!this.enabled) return;
+          const rot = this.el.getAttribute('rotation');
+          rot.y += this.data.speed;
+          this.el.setAttribute('rotation', rot);
+        }
+      });
+    </script>
+
+    <!-- Komponen zoom -->
+    <script>
+      AFRAME.registerComponent('zoom-controls', {
+        init: function () {
+          const cameraEl = this.el;
+          let camera = null;
+
+          this.el.addEventListener('loaded', () => {
+            camera = cameraEl.getObject3D('camera');
+          });
+
+          const minFov = 30;
+          const maxFov = 100;
+
+          window.addEventListener('wheel', (e) => {
+            if (!camera) return;
+            e.preventDefault();
+            let newFov = camera.fov + (e.deltaY * 0.05);
+            newFov = Math.max(minFov, Math.min(maxFov, newFov));
+            camera.fov = newFov;
+            camera.updateProjectionMatrix();
+          }, { passive: false });
+        }
+      });
+    </script>
+  </body>
+</html>
